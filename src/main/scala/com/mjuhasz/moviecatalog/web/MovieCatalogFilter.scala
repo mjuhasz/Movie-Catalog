@@ -42,6 +42,10 @@ class MovieCatalogFilter extends ScalatraFilter with UrlSupport with UrlGenerato
     JsonResponse(movieService.search(query).get.results)
   }
 
+  get("/movies/:title.json") {
+    JsonResponse(movieService.find(params("title")))
+  }
+
   val movieIndexRoute: Route = get("/movies.html") {
     val query = params.get("q").getOrElse("")
     val movies = movieService.search(query).get
