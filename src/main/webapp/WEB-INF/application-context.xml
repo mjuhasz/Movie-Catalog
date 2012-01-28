@@ -15,4 +15,7 @@
         </property>
     </bean>
 
+    <alias name="${movie.services.implementation}" alias="movieService"/>
+
+    <bean id="mockMovieService" class="com.mjuhasz.moviecatalog.movies.MockMovieService" lazy-init="true"/>
 </beans>

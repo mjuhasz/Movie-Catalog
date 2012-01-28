@@ -6,6 +6,10 @@ import compat.Platform
 
 class MovieCatalogFilter extends ScalatraFilter {
 
+  protected def movieService: MovieService = {
+    WebApplicationContextUtils.getWebApplicationContext(servletContext).getBean("movieService", classOf[MovieService])
+  }
+
   get("/") {
     redirect("/index.html")
   }
