@@ -1,6 +1,5 @@
 package com.mjuhasz.moviecatalog.web
 
-import compat.Platform
 import com.mjuhasz.moviecatalog.movies.MovieService
 import com.mjuhasz.moviecatalog.movies.MovieInformation
 import org.springframework.web.context.support.WebApplicationContextUtils
@@ -39,7 +38,7 @@ class MovieCatalogFilter extends ScalatraFilter with UrlSupport with UrlGenerato
 
   get("/movies.json") {
     val query = params.get("q").getOrElse("")
-    JsonResponse(movieService.search(query).get.results)
+    JsonResponse(movieService.search(query).results)
   }
 
   get("/movies/:title.json") {
@@ -48,7 +47,7 @@ class MovieCatalogFilter extends ScalatraFilter with UrlSupport with UrlGenerato
 
   val movieIndexRoute: Route = get("/movies.html") {
     val query = params.get("q").getOrElse("")
-    val movies = movieService.search(query).get
+    val movies = movieService.search(query)
     if (movies.results.isEmpty) {
       status(404)
       withSidebarLayout("Movie Catalog", None, Some(query), None, <div class="container"><h1>No movie matches '{ query }'</h1></div>)
@@ -71,15 +70,22 @@ class MovieCatalogFilter extends ScalatraFilter with UrlSupport with UrlGenerato
   val movieTemperatureRoute: Route = get("/movies/:title.html") {
     renderWithMovieInformation(params("title"), movieTemperatureRoute) { info =>
       <div class="content">
-        <h1>{ info.title } - { info.title_hu }</h1>
-        <p>{ info.duration }&nbsp;min</p>
+        <h1>{ info.title }</h1>
+        <h3>{ info.title_hu }</h3>
+        <table>
+          <tr><td>Audio:</td><td><strong>{ info.audio }</strong></td></tr>
+          <tr><td>Subtitle</td><td><strong>{ info.subtitle }</strong></td></tr>
+          <tr><td>Duration</td><td><strong>{ info.duration }</strong></td></tr>
+          <tr><td>HDD (hu)</td><td><strong>{ info.location_hu }</strong></td></tr>
+          <tr><td>HDD (nl)</td><td><strong>{ info.location }</strong></td></tr>
+        </table>
       </div>
     }
   }
 
   private def renderWithMovieInformation(title: String, route: Route)(body: MovieInformation => NodeSeq): NodeSeq = {
     try {
-      movieService.find(title).get() match {
+      movieService.find(title) match {
         case None =>
           status(404)
           withSidebarLayout("Movie Catalog", None, Some(title), None, <div class="container"><h1>Movie '{ title }' not found</h1></div>)

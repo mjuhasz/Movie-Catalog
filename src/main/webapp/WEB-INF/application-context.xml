@@ -18,4 +18,5 @@
     <alias name="${movie.services.implementation}" alias="movieService"/>
 
     <bean id="mockMovieService" class="com.mjuhasz.moviecatalog.movies.MockMovieService" lazy-init="true"/>
+    <bean id="DBMovieService" class="com.mjuhasz.moviecatalog.movies.DBMovieService" lazy-init="true"/>
 </beans>
