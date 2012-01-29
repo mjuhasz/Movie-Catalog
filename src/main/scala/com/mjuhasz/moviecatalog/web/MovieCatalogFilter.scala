@@ -75,9 +75,8 @@ class MovieCatalogFilter extends ScalatraFilter with UrlSupport with UrlGenerato
         <table>
           <tr><td>Audio:</td><td><strong>{ info.audio }</strong></td></tr>
           <tr><td>Subtitle</td><td><strong>{ info.subtitle }</strong></td></tr>
-          <tr><td>Runtime</td><td><strong>{ info.runtime }</strong></td></tr>
-          <tr><td>Storage</td><td><strong>{ info.storage }</strong></td></tr>
-          <tr><td>Storage (hu))</td><td><strong>{ info.storage_hu }</strong></td></tr>
+          <tr><td>Runtime</td><td><strong>{ info.runtime } min</strong></td></tr>
+          <tr><td>Storage</td><td><strong>{ info.storage }{ if (info.storage_hu != info.storage) " (" + info.storage_hu + ")" }</strong></td></tr>
           <tr><td>Source</td><td><strong>{ info.source }</strong></td></tr>
         </table>
       </div>
