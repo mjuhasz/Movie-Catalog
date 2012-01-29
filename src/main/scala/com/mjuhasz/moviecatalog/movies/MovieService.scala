@@ -57,7 +57,7 @@ class MockMovieService extends MovieService {
   override def find(title: String) = movies.find(_.title.toLowerCase == title.toLowerCase)
 }
 
-class DBMovieService extends MovieService {
+class DBMovieService(val dbFilePath: String) extends MovieService {
   import java.sql._
 
   private def encode(s: String) = URLEncoder.encode(s, "UTF-8")
@@ -76,7 +76,7 @@ class DBMovieService extends MovieService {
     import com.mjuhasz.moviecatalog.movies.MovieDAO._
 
     Class.forName("org.sqlite.JDBC");
-    val conn: Connection = DriverManager.getConnection("jdbc:sqlite:/home/mjuhasz/movie.db");
+    val conn: Connection = DriverManager.getConnection("jdbc:sqlite:" + dbFilePath);
 
     val movies = queryEach(conn, "SELECT * FROM movie") {rs =>
       MovieInformation(rs.getString("title"), rs.getString("title_hu"), rs.getString("audio"), rs.getString("subtitle"), rs.getInt("duration"), rs.getString("location_hu"), rs.getString("location"))
