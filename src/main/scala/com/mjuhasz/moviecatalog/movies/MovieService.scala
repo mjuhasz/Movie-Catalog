@@ -16,9 +16,10 @@ case class MovieInformation(
   title_hu: String,
   audio: String,
   subtitle: String,
-  duration: Int,
-  location_hu: String,
-  location: String)
+  runtime: Int,
+  storage: String,
+  storage_hu: String,
+  source: String)
 
 trait MovieService {
   def search(query: String): SearchResult[MovieSearchResult]
@@ -35,17 +36,19 @@ class MockMovieService extends MovieService {
       title_hu = "Bolondok aranya",
       audio = "5.1 HU, EN",
       subtitle = "HU, EN",
-      duration = 107,
-      location_hu = "D",
-      location = "M"),
+      runtime = 107,
+      storage = "M",
+      storage_hu = "D",
+      source = "dvd"),
     MovieInformation(
       title = "The Golden Compass",
       title_hu = "Az arany iránytű",
       audio = "2.0 HU",
       subtitle = "HU",
-      duration = 108,
-      location_hu = "G",
-      location = "O"))
+      runtime = 108,
+      storage = "O",
+      storage_hu = "G",
+      source = "blu-ray"))
 
   override def search(query: String) = {
     val matches = movies.filter(_.title.toLowerCase.contains(query.toLowerCase)).map { movie =>
@@ -79,7 +82,7 @@ class DBMovieService(val dbFilePath: String) extends MovieService {
     val conn: Connection = DriverManager.getConnection("jdbc:sqlite:" + dbFilePath);
 
     val movies = queryEach(conn, "SELECT * FROM movie") {rs =>
-      MovieInformation(rs.getString("title"), rs.getString("title_hu"), rs.getString("audio"), rs.getString("subtitle"), rs.getInt("duration"), rs.getString("location_hu"), rs.getString("location"))
+      MovieInformation(rs.getString("title"), rs.getString("title_hu"), rs.getString("audio"), rs.getString("subtitle"), rs.getInt("runtime"), rs.getString("storage"), rs.getString("storage_hu"), rs.getString("source"))
     }
     movies
   }
