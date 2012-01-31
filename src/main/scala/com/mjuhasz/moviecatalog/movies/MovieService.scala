@@ -79,17 +79,17 @@ class DBMovieService(val dbFilePath: String) extends MovieService {
     import com.mjuhasz.moviecatalog.movies.MovieDAO._
 
     Class.forName("org.sqlite.JDBC");
-    val conn: Connection = DriverManager.getConnection("jdbc:sqlite:" + dbFilePath);
-
-    val movies = queryEach(conn, "SELECT * FROM movie") {rs =>
-      MovieInformation(rs.getString("title"), rs.getString("title_hu"), rs.getString("audio"), rs.getString("subtitle"), rs.getInt("runtime"), rs.getString("storage"), rs.getString("storage_hu"), rs.getString("source"))
+    using(DriverManager.getConnection("jdbc:sqlite:" + dbFilePath)) { connection =>
+      val movies = queryEach(connection, "SELECT * FROM movie") {rs =>
+        MovieInformation(rs.getString("title"), rs.getString("title_hu"), rs.getString("audio"), rs.getString("subtitle"), rs.getInt("runtime"), rs.getString("storage"), rs.getString("storage_hu"), rs.getString("source"))
+      }
+      movies
     }
-    movies
   }
 }
 
 object MovieDAO {
-  def using[Closeable <: {def close(): Unit}, B](closeable: Closeable)(getB: Closeable => B): B =
+  def using[A <: {def close(): Unit}, B](closeable: A)(getB: A => B): B =
     try {
       getB(closeable)
     } finally {
@@ -108,12 +108,10 @@ object MovieDAO {
 
   /** Executes the SQL and processes the result set using the specified function. */
   def query[B](connection: Connection, sql: String)(process: ResultSet => B): B =
-    using (connection) { connection =>
       using (connection.createStatement) { statement =>
         using (statement.executeQuery(sql)) { results =>
           process(results)
         }
-      }
     }
 
   /** Executes the SQL and uses the process function to convert each row into a T. */
