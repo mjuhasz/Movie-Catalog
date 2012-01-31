@@ -50,12 +50,12 @@ class MovieCatalogFilter extends ScalatraFilter with UrlSupport with UrlGenerato
     val movies = movieService.search(query)
     if (movies.results.isEmpty) {
       status(404)
-      withSidebarLayout("Movie Catalog", None, Some(query), None, <div class="container"><h1>No movie matches '{ query }'</h1></div>)
+      withSidebarLayout("Movie Catalog", None, Some(query), None, <div class="content"><h1>No movie matches '{ query }'</h1></div>)
     } else if (movies.results.size == 1 && movies.results.head.title == query) {
       redirect(url(movieTemperatureRoute, "title" -> movies.results.head.title))
     } else {
       withSidebarLayout("Movie Catalog", None, None, None,
-        <div class="container">
+        <div class="content">
           <h2>Use the search bar to find information for a specific movie</h2>
           <h2>Matching movies ({ movies.results.size } out of { movies.totalSize }):</h2>
           <ul>{
@@ -88,7 +88,7 @@ class MovieCatalogFilter extends ScalatraFilter with UrlSupport with UrlGenerato
       movieService.find(title) match {
         case None =>
           status(404)
-          withSidebarLayout("Movie Catalog", None, Some(title), None, <div class="container"><h1>Movie '{ title }' not found</h1></div>)
+          withSidebarLayout("Movie Catalog", None, Some(title), None, <div class="content"><h1>Movie '{ title }' not found</h1></div>)
         case Some(info) =>
           withSidebarLayout("Movie Catalog", Some(info.title), None, Some(route), body(info))
       }
@@ -97,7 +97,7 @@ class MovieCatalogFilter extends ScalatraFilter with UrlSupport with UrlGenerato
         e.printStackTrace()
         status(500)
         withSidebarLayout("Movie Catalog", None, Some(title), None,
-          <div class="container">
+          <div class="content">
             <h1>Error accessing movie '{ title }'</h1>
             <pre>{ e }</pre>
           </div>)
@@ -107,11 +107,22 @@ class MovieCatalogFilter extends ScalatraFilter with UrlSupport with UrlGenerato
   private def withSidebarLayout(pageTitle: String, title: Option[String], query: Option[String], selected: Option[Route], body: NodeSeq) = {
     withBasicLayout(pageTitle,
       <form id="movieSearch" action={ url(movieIndexRoute) } method="GET">
-          <input type="text" name="q" value={ query.getOrElse("") } placeholder="Search for a movie..." class="span12" autofocus=""/>
+          <input type="text" name="q" value={ query.getOrElse("") } placeholder="Search for a movie..." autofocus=""/>
       </form>,
       <div class="container-fluid">
-        { NodeSeq.Empty //title.map(renderMenu(_, selected)).getOrElse(NodeSeq.Empty) } //TODO: menu
-        }
+        <div class="sidebar">
+          <div class="well">
+            <h5>Sidebar</h5>
+            <ul>
+              <li><a href="#">Link</a></li>
+              <li><a href="#">Link</a></li>
+            </ul>
+            <h5>Sidebar</h5>
+            <ul>
+              <li><a href="#">Link</a></li>
+            </ul>
+          </div>
+        </div>
         { body }
       </div>)
   }
@@ -121,10 +132,11 @@ class MovieCatalogFilter extends ScalatraFilter with UrlSupport with UrlGenerato
       <head>
         <meta charset="utf-8"/>
         <title>{ pageTitle }</title>
-        <link href={ url("/css/custom-theme/jquery-ui-1.8.16.custom.css") } rel="stylesheet"/>
-        <link href={ url("/css/moviecatalog.css") } rel="stylesheet"/>
-        <script type="text/javascript" src={ url("/js/jquery-1.6.4.min.js") }></script>
-        <script type="text/javascript" src={ url("/js/jquery-ui-1.8.16.custom.min.js") }></script>
+        <link rel="stylesheet" href={ url("/css/bootstrap.min.css") } />
+        <link rel="stylesheet" href={ url("/css/moviecatalog.css") } />
+        <link rel="stylesheet" href={ url("/css/ui-darkness/jquery-ui-1.8.17.custom.css") } />
+        <script type="text/javascript" src={ url("/js/jquery-1.7.1.min.js") }></script>
+        <script type="text/javascript" src={ url("/js/jquery-ui-1.8.17.custom.min.js") }></script>
         <script type="text/javascript" src={ url("/js/moviecatalog.js") }></script>
       </head>
       <body>
