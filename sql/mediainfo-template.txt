@@ -1,0 +1,5 @@
+#USAGE: ls /media/Calypso/dvd/ | while read MKV; do mediainfo --Inform=file:///home/mjuhasz/mediainfo-template.txt /media/Calypso/dvd/"$MKV"; done
+
+#Filename|FileSize|Duration|Audio Language List|Subtitle Language List|Resolution|Aspect Ratio|Framerate
+General;%FileName%.%FileExtension%|%FileSize/String2%|%Duration/String%|%Audio_Language_List%|%Text_Language_List%|
+Video;%Width%x%Height%|%DisplayAspectRatio/String%|%FrameRate_Original/String%

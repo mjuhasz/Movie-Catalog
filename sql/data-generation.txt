@@ -1,0 +1,7 @@
+Generate list.ods:
+
+SELECT movie.title, movie.title_hu, mediainfo.audio_lng, mediainfo.subtitle_lng, mediainfo.runtime, movie.storage_a, movie.storage_b FROM movie JOIN mediainfo ON movie.title=mediainfo.title order by movie.source;
+
+
+Generate mediainfo:
+ls | while read MKV; do echo "$MKV"; mediainfo --Inform=file:///home/mjuhasz/mediainfo-template.txt "$MKV" >> /home/mjuhasz/mediainfo-XXX.csv; done
