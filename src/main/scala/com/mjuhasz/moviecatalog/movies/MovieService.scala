@@ -16,9 +16,9 @@ case class MovieInformation(
   title_hu: String,
   audio: String,
   subtitle: String,
-  runtime: Int,
-  storage: String,
-  storage_hu: String,
+  runtime: String,
+  storage_a: String,
+  storage_b: String,
   source: String)
 
 trait MovieService {
@@ -36,18 +36,18 @@ class MockMovieService extends MovieService {
       title_hu = "Bolondok aranya",
       audio = "5.1 HU, EN",
       subtitle = "HU, EN",
-      runtime = 107,
-      storage = "M",
-      storage_hu = "D",
+      runtime = "107 min",
+      storage_a = "M",
+      storage_b = "D",
       source = "dvd"),
     MovieInformation(
       title = "The Golden Compass",
       title_hu = "Az arany iránytű",
       audio = "2.0 HU",
       subtitle = "HU",
-      runtime = 108,
-      storage = "O",
-      storage_hu = "G",
+      runtime = "108 min",
+      storage_a = "O",
+      storage_b = "G",
       source = "blu-ray"))
 
   override def search(query: String) = {
@@ -80,8 +80,8 @@ class DBMovieService(val dbFilePath: String) extends MovieService {
 
     Class.forName("org.sqlite.JDBC");
     using(DriverManager.getConnection("jdbc:sqlite:" + dbFilePath)) { connection =>
-      val movies = queryEach(connection, "SELECT * FROM movie") {rs =>
-        MovieInformation(rs.getString("title"), rs.getString("title_hu"), rs.getString("audio"), rs.getString("subtitle"), rs.getInt("runtime"), rs.getString("storage"), rs.getString("storage_hu"), rs.getString("source"))
+      val movies = queryEach(connection, "SELECT movie.title, movie.title_hu, mediainfo.audio_lng, mediainfo.subtitle_lng, mediainfo.runtime, movie.source, movie.storage_a, movie.storage_b FROM movie JOIN mediainfo ON movie.title=mediainfo.title") {rs =>
+        MovieInformation(rs.getString("title"), rs.getString("title_hu"), rs.getString("audio_lng"), rs.getString("subtitle_lng"), rs.getString("runtime"), rs.getString("storage_a"), rs.getString("storage_b"), rs.getString("source"))
       }
       movies
     }
