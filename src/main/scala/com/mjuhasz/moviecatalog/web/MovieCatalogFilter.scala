@@ -143,7 +143,7 @@ class MovieCatalogFilter extends ScalatraFilter with UrlSupport with UrlGenerato
         <div class="topbar">
           <div class="topbar-inner">
             <div class="container-fluid">
-              <a class="brand" href="#">Movie Catalog</a>
+              <a class="brand" href={ url(movieIndexRoute) }>Movie Catalog</a>
               { topbar }
             </div>
           </div>
