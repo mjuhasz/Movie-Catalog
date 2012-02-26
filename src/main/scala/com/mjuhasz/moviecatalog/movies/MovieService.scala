@@ -19,7 +19,11 @@ case class MovieInformation(
   runtime: String,
   storage_a: String,
   storage_b: String,
-  source: String)
+  source: String,
+  size: String,
+  resolution: String, 
+  aspect_ratio: String,
+  framerate: String)
 
 trait MovieService {
   def search(query: String): SearchResult[MovieSearchResult]
@@ -39,7 +43,11 @@ class MockMovieService extends MovieService {
       runtime = "107 min",
       storage_a = "M",
       storage_b = "D",
-      source = "dvd"),
+      source = "dvd",
+      size = "4.4 GiB",
+      resolution = "720 x 576",
+      aspect_ratio = "4:3",
+      framerate = "25 fps"),
     MovieInformation(
       title = "The Golden Compass",
       title_hu = "Az arany iránytű",
@@ -48,7 +56,11 @@ class MockMovieService extends MovieService {
       runtime = "108 min",
       storage_a = "O",
       storage_b = "G",
-      source = "blu-ray"))
+      source = "blu-ray",
+      size = "4.4 GiB",
+      resolution = "720 x 576",
+      aspect_ratio = "4:3",
+      framerate = "25 fps"))
 
   override def search(query: String) = {
     val matches = movies.filter(_.title.toLowerCase.contains(query.toLowerCase)).map { movie =>
@@ -80,8 +92,8 @@ class DBMovieService(val dbFilePath: String) extends MovieService {
 
     Class.forName("org.sqlite.JDBC");
     using(DriverManager.getConnection("jdbc:sqlite:" + dbFilePath)) { connection =>
-      val movies = queryEach(connection, "SELECT movie.title, movie.title_hu, mediainfo.audio_lng, mediainfo.subtitle_lng, mediainfo.runtime, movie.source, movie.storage_a, movie.storage_b FROM movie JOIN mediainfo ON movie.title=mediainfo.title") {rs =>
-        MovieInformation(rs.getString("title"), rs.getString("title_hu"), rs.getString("audio_lng"), rs.getString("subtitle_lng"), rs.getString("runtime"), rs.getString("storage_a"), rs.getString("storage_b"), rs.getString("source"))
+      val movies = queryEach(connection, "SELECT movie.title, movie.title_hu, mediainfo.audio_lng, mediainfo.subtitle_lng, mediainfo.runtime, movie.source, movie.storage_a, movie.storage_b, mediainfo.size, mediainfo.resolution, mediainfo.aspect_ratio, mediainfo.framerate FROM movie JOIN mediainfo ON movie.title=mediainfo.title") {rs =>
+        MovieInformation(rs.getString("title"), rs.getString("title_hu"), rs.getString("audio_lng"), rs.getString("subtitle_lng"), rs.getString("runtime"), rs.getString("storage_a"), rs.getString("storage_b"), rs.getString("source"), rs.getString("size"), rs.getString("resolution"), rs.getString("aspect_ratio"), rs.getString("framerate"))
       }
       movies
     }
