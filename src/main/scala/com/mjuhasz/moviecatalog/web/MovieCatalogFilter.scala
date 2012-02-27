@@ -10,7 +10,7 @@ import xml.{Xhtml, NodeSeq}
 
 case class JsonResponse[A](content: A)
 
-class MovieCatalogFilter extends ScalatraFilter with UrlSupport with UrlGeneratorSupport with MovieCatalogRoutes {
+class MovieCatalogFilter extends ScalatraFilter with UrlSupport with UrlGeneratorSupport with MovieCatalogRoutes with Menu {
 
   implicit val formats = Serialization.formats(NoTypeHints)
 
@@ -83,6 +83,21 @@ class MovieCatalogFilter extends ScalatraFilter with UrlSupport with UrlGenerato
     }
   }
 
+  val movieTechnicalRoute: Route = get("/movies/spec/:title.html") {
+    renderWithMovieInformation(params("title"), movieTechnicalRoute) { info =>
+      <div class="content">
+        <h1>{ info.title }</h1>
+        <h3>{ info.title_hu }</h3>
+        <table>
+          <tr><td>Size:</td><td><strong>{ info.size }</strong></td></tr>
+          <tr><td>Resolution:</td><td><strong>{ info.resolution }</strong></td></tr>
+          <tr><td>Aspect Ratio:</td><td><strong>{ info.aspect_ratio }</strong></td></tr>
+          <tr><td>Framerate:</td><td><strong>{ info.framerate }</strong></td></tr>
+        </table>
+      </div>
+    }
+  }
+
   private def renderWithMovieInformation(title: String, route: Route)(body: MovieInformation => NodeSeq): NodeSeq = {
     try {
       movieService.find(title) match {
@@ -110,22 +125,27 @@ class MovieCatalogFilter extends ScalatraFilter with UrlSupport with UrlGenerato
           <input type="text" name="q" value={ query.getOrElse("") } placeholder="Search for a movie..." autofocus=""/>
       </form>,
       <div class="container-fluid">
-        <div class="sidebar">
-          <div class="well">
-            <h5>Sidebar</h5>
-            <ul>
-              <li><a href="#">Link</a></li>
-              <li><a href="#">Link</a></li>
-            </ul>
-            <h5>Sidebar</h5>
-            <ul>
-              <li><a href="#">Link</a></li>
-            </ul>
-          </div>
-        </div>
+        { title.map(renderMenu(_, selected)).getOrElse(NodeSeq.Empty) }
         { body }
       </div>)
   }
+
+  private def renderMenu(title: String, selected: Option[Route]) = {
+    <div class="sidebar">
+      <div class="well">{
+        for (entry <- menuEntries) yield {
+          <h4 class={ if (entry.route == selected) "selected" else "" }>{ entry.toXhtml(title) }</h4> ++ (if (entry.children.isEmpty) NodeSeq.Empty else {
+            <ul class="unstyled">{
+              for (child <- entry.children) yield {
+                <li class={ if (child.route == selected) "selected" else "" }>{ child.toXhtml(title) }</li>
+              }
+              }</ul>
+          })
+        }
+        }</div>
+    </div>
+  }
+
 
   private def withBasicLayout(pageTitle: String, topbar: NodeSeq, body: NodeSeq) = {
     <html lang="en">

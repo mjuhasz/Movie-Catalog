@@ -5,4 +5,5 @@ import org.scalatra.Route
 trait MovieCatalogRoutes {
   def movieIndexRoute: Route
   def movieTemperatureRoute: Route
+  def movieTechnicalRoute: Route
 }
