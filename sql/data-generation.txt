@@ -1,4 +1,4 @@
-Generate list.ods:
+Generate list:
 
 SELECT movie.title, movie.title_hu, mediainfo.audio_lng, mediainfo.subtitle_lng, mediainfo.runtime, movie.storage_a, movie.storage_b FROM movie JOIN mediainfo ON movie.title=mediainfo.title ORDER BY movie.source DESC;
 
