@@ -20,7 +20,11 @@ $(function() {
     $("#movieSearch input[type=text]").autocomplete({
         minLength: 3,
         source: availableMovies,
-        change: function(event, ui) {
+        autoFocus: true,
+        select: function(event, ui) {
+            if(ui.item){
+                $(event.target).val(ui.item.value);
+            }
             $("#movieSearch").submit();
         }
     });
