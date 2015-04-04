@@ -107,7 +107,7 @@ class DBMovieService(val dbFilePath: String) extends MovieService {
 
     Class.forName("org.sqlite.JDBC");
     using(DriverManager.getConnection("jdbc:sqlite:" + dbFilePath)) { connection =>
-      val movies = queryEach(connection, "SELECT movie.title, movie.title_hu, mediainfo.audio_lng, mediainfo.subtitle_lng, mediainfo.runtime, movie.source, movie.storage_a, movie.storage_b, mediainfo.size, mediainfo.resolution, mediainfo.aspect_ratio, mediainfo.framerate FROM movie JOIN mediainfo ON movie.title=mediainfo.title") {rs =>
+      val movies = queryEach(connection, "SELECT movies.title, movies.title_hu, mediainfo.audio_lng, mediainfo.subtitle_lng, mediainfo.runtime, movies.source, movies.storage_a, movies.storage_b, mediainfo.size, mediainfo.resolution, mediainfo.aspect_ratio, mediainfo.framerate FROM movies JOIN mediainfo ON movies.title=mediainfo.title") {rs =>
         MovieInformation(rs.getString("title"), rs.getString("title_hu"), rs.getString("audio_lng"), rs.getString("subtitle_lng"), rs.getString("runtime"), rs.getString("storage_a"), rs.getString("storage_b"), rs.getString("source"), rs.getString("size"), rs.getString("resolution"), rs.getString("aspect_ratio"), rs.getString("framerate"))
       }
       movies
