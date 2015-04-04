@@ -1,6 +1,0 @@
-# Usage: ls /media/Calypso/dvd/ | while read MKV; do mediainfo --Inform=file:///home/mjuhasz/git/movie-catalog/sql/mediainfo-template.txt /media/Calypso/dvd/"$MKV" | sed 's/\.mkv|/|/g' >> ~/mediainfo.txt; done
-# Try FrameRate_Original or FrameRate if one of them is missing
-
-#Filename|FileSize|Duration|Audio Language List|Subtitle Language List|Resolution|Aspect Ratio|Framerate
-General;%FileName%.%FileExtension%|%FileSize/String2%|%Duration/String%|%Audio_Language_List%|%Text_Language_List%|
-Video;%Width%x%Height%|%DisplayAspectRatio/String%|%FrameRate_Original/String%
